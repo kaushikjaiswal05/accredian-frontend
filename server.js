@@ -1,8 +1,8 @@
-import express from "express";
-import { PrismaClient } from "@prisma/client";
-import nodemailer from "nodemailer";
-import cors from "cors";
-import dotenv from "dotenv";
+import express from 'express';
+import { PrismaClient } from '@prisma/client';
+import nodemailer from 'nodemailer';
+import cors from 'cors';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -12,14 +12,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.post("/api/referrals", async (req, res) => {
-  console.log("Request received:", req.body);
+app.post('/api/referrals', async (req, res) => {
   const { referrerName, referrerEmail, refereeName, refereeEmail } = req.body;
 
   if (!referrerName || !referrerEmail || !refereeName || !refereeEmail) {
-    return res
-      .status(400)
-      .json({ success: false, message: "All fields are required." });
+    return res.status(400).json({ success: false, message: 'All fields are required.' });
   }
 
   try {
@@ -28,7 +25,7 @@ app.post("/api/referrals", async (req, res) => {
     });
 
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      service: 'gmail',
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
@@ -38,7 +35,7 @@ app.post("/api/referrals", async (req, res) => {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: refereeEmail,
-      subject: "Referral Program",
+      subject: 'Referral Program',
       text: `Hi ${refereeName},\n\n${referrerName} has referred you to our program. Join now and earn rewards!`,
     };
 
@@ -47,24 +44,7 @@ app.post("/api/referrals", async (req, res) => {
     res.json({ success: true });
   } catch (err) {
     console.error(err);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "An error occurred. Please try again.",
-      });
-  }
-});
-
-app.get("/api/referrals", async (req, res) => {
-  try {
-    const referrals = await prisma.referral.findMany();
-    res.json(referrals);
-  } catch (err) {
-    console.error(err);
-    res
-      .status(500)
-      .json({ success: false, message: "An error occurred. Please try again." });
+    res.status(500).json({ success: false, message: 'An error occurred. Please try again.' });
   }
 });
 
