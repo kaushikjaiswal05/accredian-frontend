@@ -10,10 +10,7 @@ const prisma = new PrismaClient();
 app.use(cors());
 app.use(bodyParser.json());
 
-app.get('/api/referrals', async (req, res) => {
-  const referrals = await prisma.referral.findMany();
-  res.json(referrals);
-});
+
 
 app.post('/api/referrals', async (req, res) => {
   const { referrerName, referrerEmail, refereeName, refereeEmail } = req.body;
@@ -58,6 +55,20 @@ app.post('/api/referrals', async (req, res) => {
     res.status(201).json({ success: true, message: 'Referral saved successfully.', referral });
   } catch (error) {
     console.error('Error saving referral:', error);
+    res.status(500).json({ success: false, message: 'An error occurred. Please try again.' });
+  }
+});
+
+app.get('/', (req, res) => {
+  res.send('Server is running');
+});
+
+app.get('/api/referrals', async (req, res) => {
+  try {
+    const referrals = await prisma.referral.findMany();
+    res.json({ success: true, referrals });
+  } catch (error) {
+    console.error('Error fetching referrals:', error);
     res.status(500).json({ success: false, message: 'An error occurred. Please try again.' });
   }
 });
