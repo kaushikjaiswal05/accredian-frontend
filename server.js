@@ -10,6 +10,11 @@ const prisma = new PrismaClient();
 app.use(cors());
 app.use(bodyParser.json());
 
+app.get('/api/referrals', async (req, res) => {
+  const referrals = await prisma.referral.findMany();
+  res.json(referrals);
+});
+
 app.post('/api/referrals', async (req, res) => {
   const { referrerName, referrerEmail, refereeName, refereeEmail } = req.body;
 
