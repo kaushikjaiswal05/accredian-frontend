@@ -28,13 +28,13 @@ const RefModal = ({ open, handleClose }) => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/api/referrals', {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/referrals`, {
         referrerName,
         referrerEmail,
         refereeName,
         refereeEmail,
       });
-        
+
       if (response.data.success) {
         handleClose();
       } else {
